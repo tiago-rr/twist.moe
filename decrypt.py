@@ -50,6 +50,11 @@ def decrypt_export(url):
     escap_ed = quote(decrypt_ed, safe='~@#$&()*!+=:;,.?/\'')
     return escap_ed
 
+def decrypt_single(source):
+    decrypt_ed = decrypt((source).encode('utf-8'), KEY).decode('utf-8').lstrip(' ')
+    escap_ed = quote(decrypt_ed, safe='~@#$&()*!+=:;,.?/\'')
+    return escap_ed
+
 if __name__ == '__main__':
     if sys.argv:
         if len(sys.argv[1:]) > 1:

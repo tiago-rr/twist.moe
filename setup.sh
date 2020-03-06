@@ -65,6 +65,12 @@ then
         echo '[setup.sh] > Installing hashlib for python'
         $python3 -m pip install --user hashlib
     fi
+    $python3 -c "import python-dotenv" &>/dev/null
+    if [ $? -ne 0 ]
+    then
+        echo '[setup.sh] > Installing python-dotenv for python'
+        $python3 -m pip install --user python-dotenv
+    fi
     $python3 -m pip install --user -U -r requirements.txt
     $python3 -c "import Cryptodome" &>/dev/null
     if [ $? -ne 0 ]
