@@ -34,7 +34,8 @@ fullApiUrl = '{}/{}'.format(apiUrl, slug)
 
 slugValid = requests.get(fullApiUrl, headers=header).status_code == 200
 if not slugValid:
-    # TODO: slug invalid/unknown
+    print('\n')
+    print('Invalid slug, please input a correct one.')
     exit()
 
 if slug in data:
