@@ -80,6 +80,41 @@ elif len(argv) == 4:
                 print('\n')
                 print('ERROR! Please use valid numbers!')
                 exit()
+elif len(argv) == 2:
+    slug = argv[1]
+    print('Download configuration: ')
+    episodes = input('\nEpisodes to download ([start]/[end] or [episode] or "all"): ')
+    if episodes == 'all':
+        startEp = 1
+        endEp = -1
+    else:
+        if '/' in episodes:
+            try:
+                startEp = int(episodes.split('/')[0])
+                endEp = int(episodes.split('/')[1])
+            except Exception as error:
+                print('ERROR! Please use valid numbers!')
+                exit()
+            
+            if startEp > endEp:
+                print('\n')
+                print('ERROR! End episode must be greater than the start episode!')
+                exit()
+        else:
+            try:
+                startEp = int(episodes)
+                endEp = startEp
+            except Exception as error:
+                print('\n')
+                print('ERROR! Please use valid numbers!')
+                exit()
+
+    useEnv = input("\nWould you like to use the .env's download path? [Y/n] ")
+    if useEnv == 'y' or useEnv == 'Y':
+        downloadPath = getenv('DOWNLOAD_PATH')
+    else:
+        downloadPath = input('\nInput the download path: ') + "/{}".format(slug)
+        print('Download path: {}/{}'.format(downloadPath))
     
 else:
     print('\n')
@@ -89,7 +124,9 @@ else:
 
 animePath = getenv("ANIME_JSON_PATH")
 header = {
-    'x-access-token': getenv('HEADER_AUTH')
+    'x-access-token': getenv('HEADER_AUTH'),
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36',
+    "Referer": "https://twist.moe/"
 }
 apiUrl = getenv("API_URL")
 twistUrl = getenv('TWIST_URL')
@@ -129,8 +166,14 @@ if startEp < endEp:
     for index in range(startEp - 1, endEp - 1):
         link = data[slug][index]
         print('Downloading episode {}...'.format(index + 1))
-        system('bash down.sh {} {}-{}.mp4 {}'.format(downloadPath, slug, "{:03d}".format(index + 1), link))
+        response = requests.get(link, headers=header, stream=True)
+        with open('{}/{}-{}.mp4'.format(downloadPath, slug, "{:03d}".format(index + 1)), 'wb') as fd:
+            for chunk in response.iter_content(chunk_size=128):
+                fd.write(chunk)
 else:
     link = data[slug][startEp - 1]
     print('Downloading episode {}...'.format(startEp))
-    system('bash down.sh {} {}-{}.mp4 {}'.format(downloadPath, slug, "{:03d}".format(startEp), link))
+    response = requests.get(link, headers=header, stream=True)
+    with open('{}/{}-{}.mp4'.format(downloadPath, slug, "{:03d}".format(startEp)), 'wb') as fd:
+        for chunk in response.iter_content(chunk_size=128):
+            fd.write(chunk)
