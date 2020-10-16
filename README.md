@@ -5,7 +5,7 @@
 ## Installation (Setup)
 
 ```shell
-git clone https://github.com/phanirithvij/twist.moe.git
+git clone https://github.com/tiago-rr/twist.moe.git
 cd twist.moe/
 chmod +x *.sh # optional
 ```
